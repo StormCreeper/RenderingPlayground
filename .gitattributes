@@ -1,2 +1,2 @@
-External/** linguist-vendored
+dep/** linguist-vendored
 *.h linguist-language=cpp
