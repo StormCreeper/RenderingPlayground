@@ -60,6 +60,8 @@ struct Hit {
     float t;
     vec3 position;
     vec3 normal;
+    vec3 tangent;
+    vec3 bitangent;
     vec2 uv;
     int triangle_index;
     int model_index;
@@ -96,6 +98,8 @@ struct Vertex {
     float u;
     vec3 normal;
     float v;
+    vec3 tangent;
+    float p;
 };
 
 uniform mat4 inv_view_mat;
@@ -357,7 +361,7 @@ float AABBIntersection(in Ray ray, vec3 minp, vec3 maxp) {
 }
 
 Hit traceRayBVH(in Ray ray) {
-    Hit hit = Hit(false, 1000000.0, vec3(0.0), vec3(0.0), vec2(0.0), -1, -1, false);
+    Hit hit = Hit(false, 1000000.0, vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec2(0.0), -1, -1, false);
     
     int node_stack[64];
 
@@ -440,6 +444,14 @@ Hit traceRayBVH(in Ray ray) {
             barycentric.y * vertices[triangle_indices.y].normal +
             barycentric.z * vertices[triangle_indices.z].normal
         );
+
+        hit.tangent = normalize(
+            barycentric.x * vertices[triangle_indices.x].tangent +
+            barycentric.y * vertices[triangle_indices.y].tangent +
+            barycentric.z * vertices[triangle_indices.z].tangent
+        );
+
+        hit.bitangent = cross(hit.normal, hit.tangent);
 
         hit.uv = (
             barycentric.x * vec2(vertices[triangle_indices.x].u, vertices[triangle_indices.x].v) +
@@ -568,12 +580,18 @@ void main() {
     rayAt(ray, fPos);
     
     Hit hit = traceRayBVH(ray);
+
     Hit first_hit = hit;
 
     vec3 radiance;
 
     if (hit.hit) {
         Model model = models[hit.model_index];
+
+        if(model.material.normalTex != -1) {
+            vec3 normalMap = sampleTex(hit.uv, model.material.normalTex, vec4(0.5, 0.5, 1.0, 1.0)).xyz * 2.0 - 1.0;
+            hit.normal = normalize(hit.tangent * normalMap.x + hit.bitangent * normalMap.y + hit.normal * normalMap.z);
+        }
 
         float energy = 1.0;
         

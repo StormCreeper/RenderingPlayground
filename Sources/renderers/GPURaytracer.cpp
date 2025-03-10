@@ -106,6 +106,8 @@ struct SSBO_Vertex {
     float u;
     glm::vec3 normal;
     float v;
+    glm::vec3 tangent;
+    float p;
 };
 
 void buildGPUData(
@@ -148,8 +150,9 @@ void buildGPUData(
         for (size_t j = 0; j < model->mesh()->vertexPositions().size(); j++) {
             glm::vec3 position = model->mesh()->vertexPositions()[j];
             glm::vec3 normal = model->mesh()->vertexNormals()[j];
+            glm::vec3 tangent = model->mesh()->vertexTangents()[j];
             glm::vec2 uv = model->mesh()->vertexUVs()[j];
-            vertices.push_back(SSBO_Vertex{ position, uv.x, normal, uv.y });
+            vertices.push_back(SSBO_Vertex{ position, uv.x, normal, uv.y, tangent, 0 });
         }
 
         bvh_offset += nodes.size();
