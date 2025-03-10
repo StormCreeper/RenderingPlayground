@@ -588,15 +588,16 @@ void main() {
     if (hit.hit) {
         Model model = models[hit.model_index];
 
-        if(model.material.normalTex != -1) {
-            vec3 normalMap = sampleTex(hit.uv, model.material.normalTex, vec4(0.5, 0.5, 1.0, 1.0)).xyz * 2.0 - 1.0;
-            hit.normal = normalize(hit.tangent * normalMap.x + hit.bitangent * normalMap.y + hit.normal * normalMap.z);
-        }
-
         float energy = 1.0;
         
         for(int i=0; i<imageParameters.numRefractions+1; i++) {
             model = models[hit.model_index];
+
+            if(model.material.normalTex != -1) {
+            vec3 normalMap = sampleTex(hit.uv, model.material.normalTex, vec4(0.5, 0.5, 1.0, 1.0)).xyz * 2.0 - 1.0;
+            hit.normal = normalize(hit.tangent * normalMap.x + hit.bitangent * normalMap.y + hit.normal * normalMap.z);
+        }
+
             if(model.material.transparent) {
                 float reflectance = FresnelReflectAmount(1.0, 1.3, hit.normal, ray.direction, model.material.base_reflectance);
                 float transmittance = 1.0 - reflectance;
