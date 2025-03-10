@@ -249,10 +249,10 @@ void initScene() {
 
     // Mesh
 
-    Material goldMat = { glm::vec3(1.0f), 0.4f, 0.7f, glm::vec3(1.0, 0.71, 0.29) };
+    Material goldMat = { glm::vec3(1.0f), 0.4f, 0.1f, glm::vec3(1.0, 0.71, 0.29) };
 
     goldMat.albedoTex() = 0;
-    goldMat.metalnessTex() = 1;
+    //goldMat.metalnessTex() = 1;
     goldMat.roughnessTex() = 2;
     goldMat.aoTex() = 3;
     goldMat.normalTex() = 4;

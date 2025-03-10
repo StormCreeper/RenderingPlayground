@@ -28,7 +28,6 @@ void ShaderProgram::loadShader(GLenum type, const std::string& shaderFilename) {
     glCheckError("Compiling Shader " + shaderFilename);
     GLint shaderCompiled;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &shaderCompiled);
-    glCheckError("Compiling Shader " + shaderFilename);
     if (!shaderCompiled)
         exitOnCriticalError("Error: shader not compiled. Info. Log.:\n" + shaderInfoLog(shaderFilename, shader) + "\n");
     glAttachShader(m_id, shader);

@@ -46,7 +46,7 @@ void IO::loadOFF(const std::string& filename, std::shared_ptr<Mesh> meshPtr) {
     in.close();
     meshPtr->vertexNormals().resize(P.size(), glm::vec3(0.f, 0.f, 1.f));
     meshPtr->recomputePerVertexNormals();
-    std::cout << "Mesh <" + filename + "> loaded" << std::endl;
+    std::cout << "Mesh <" + filename + "> loaded, " << meshPtr->triangleIndices().size() << " triangles\n";
 }
 
 std::string IO::file2String(const std::string& filename) {
