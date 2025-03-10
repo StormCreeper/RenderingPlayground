@@ -1,13 +1,13 @@
 # Toy Renderer
 
-I developped this program for my M2 image synthesis class, to experiment with different rendering techniques: raytracing, rasterization, PBR, ...
+I started this project for a Master 2 image synthesis class, and I spent a lot of time extending it to experiment with different rendering techniques: raytracing, rasterization, PBR, ...
 
 ## Setting up (git + cmake) 
 
 `git clone https://github.com/StormCreeper/RenderingPlayground.git`  
 `cd RenderingPlayground`  
 `mkdir build & cd build`  
-`cmake ..`  
+`cmake -DCMAKE_BUILD_TYPE=Release ..`  
 `cmake --build .`  
 `./ToyRenderer.exe`  
 
