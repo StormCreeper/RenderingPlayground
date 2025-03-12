@@ -8,8 +8,15 @@
 class Mesh;
 
 class IO {
-public:
-    static void loadOFF(const std::string& filename, std::shared_ptr<Mesh> meshPtr);
-    static std::string file2String(const std::string& filename);
-    static void savePPM(const std::string& filename, int width, int height, const std::vector<glm::vec3>& pixels);
+   public:
+	static void loadOFF(const std::string& filename,
+						std::shared_ptr<Mesh> meshPtr);
+
+	static void loadOBJ(const std::string& filename,
+						std::vector<std::shared_ptr<Mesh>>& meshes);
+
+	static std::string file2String(const std::string& filename);
+
+	static void savePPM(const std::string& filename, int width, int height,
+						const std::vector<glm::vec3>& pixels);
 };
