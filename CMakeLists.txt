@@ -22,6 +22,7 @@ set_target_properties(ToyRenderer PROPERTIES
 # Copy the shader files in the binary location.
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} dep/stb_image/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} dep/obj_loader/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} Sources/)
 
 target_link_libraries(ToyRenderer LINK_PRIVATE glad)

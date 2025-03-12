@@ -1,6 +1,6 @@
 # GLAD for modern OpenGL Extension
 set(GLAD_PROFILE "core" CACHE STRING "" FORCE)
-set(GLAD_API "gl=4.5" CACHE STRING "" FORCE)
+set(GLAD_API "gl=4.6" CACHE STRING "" FORCE)
 add_subdirectory(glad)
 set_property(TARGET glad PROPERTY FOLDER "dep")
 
