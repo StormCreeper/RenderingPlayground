@@ -129,7 +129,8 @@ void RayTracer::render(const std::shared_ptr<Scene> scenePtr) {
 			auto& model = *scenePtr->model(hit.meshIndex);
 			auto& mesh = *scenePtr->model(hit.meshIndex)->mesh();
 
-			glm::uvec3 hit_triangle = mesh.bvh()->triangles[hit.triangleIndex];
+			glm::uvec3 hit_triangle =
+				mesh.bvh()->triangles()[hit.triangleIndex];
 			const glm::vec3& a = mesh.vertexPositions()[hit_triangle.x];
 			const glm::vec3& b = mesh.vertexPositions()[hit_triangle.y];
 			const glm::vec3& c = mesh.vertexPositions()[hit_triangle.z];
@@ -191,7 +192,7 @@ void RayTracer::render(const std::shared_ptr<Scene> scenePtr) {
 
 					glm::uvec3 reflected_triangle =
 						reflectedMesh.bvh()
-							->triangles[reflectedHit.triangleIndex];
+							->triangles()[reflectedHit.triangleIndex];
 					const glm::vec3& reflected_a =
 						reflectedMesh.vertexPositions()[reflected_triangle.x];
 					const glm::vec3& reflected_b =

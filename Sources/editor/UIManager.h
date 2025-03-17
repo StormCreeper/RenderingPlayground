@@ -11,7 +11,12 @@
 
 #include "Editor.h"
 
+/**
+ * @brief Class that handles the ImGui context, manages all the editors and
+ * renders them.
+ */
 class UIManager {
+   private:
 	std::vector<std::shared_ptr<Editor>> editors;
 
    public:
@@ -30,12 +35,15 @@ class UIManager {
 					// callbacks and chain to existing ones.
 		ImGui_ImplOpenGL3_Init();
 	}
+
+	/// @brief Renders the UIs of all the editors in a single frame, using
+	/// collapsing headers
 	void renderUIs() {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		ImGui::Begin("Parameters", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::Begin("Editors", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
 		for (auto editor : editors) {
 			if (ImGui::CollapsingHeader(editor->name().c_str())) {
@@ -51,6 +59,8 @@ class UIManager {
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 
+	/// @brief Adds an editor to the UIManager
+	/// @param editor
 	void add(std::shared_ptr<Editor> editor) { editors.push_back(editor); }
 
 	void shutdown() {

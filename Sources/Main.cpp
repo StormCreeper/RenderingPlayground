@@ -257,14 +257,14 @@ void initScene() {
 
 	goldMat.heightMult() = 0.1f;
 
-	auto sphereMeshPtr = loadMesh("Resources/Models/dragon.off", goldMat);
+	auto sphereMeshPtr = loadMesh("Resources/Models/sphere_.off", goldMat);
 	sphereMeshPtr->computeBoundingSphere(center, meshScale);
 	sphereMeshPtr->setTranslation(glm::vec3(1.0f, 0, 0) * meshScale);
 
 	Material glassMat(glm::vec3(1.0f), 0.1f, 1.0f, glm::vec3(1.0, 1.0, 1.0),
 					  true, 0.04f, 1.3f);
 
-	auto denisMeshPtr = loadMesh("Resources/Models/dragon.off", glassMat);
+	auto denisMeshPtr = loadMesh("Resources/Models/denis.off", glassMat);
 	glm::vec3 denisCenter;
 	float denisScale;
 	denisMeshPtr->computeBoundingSphere(denisCenter, denisScale);

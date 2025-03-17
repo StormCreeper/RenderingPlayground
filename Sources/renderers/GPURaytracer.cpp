@@ -146,14 +146,14 @@ void buildGPUData(std::vector<SSBO_Vertex>& vertices,
 			node.min = nodes[j]->aabb->begin_corner;
 			node.max = nodes[j]->aabb->end_corner;
 			node.triangle_count =
-				nodes[j]->childIndex == 0 ? nodes[j]->num_triangles : 0;
-			node.offset = nodes[j]->childIndex == 0 ? nodes[j]->first
-													: nodes[j]->childIndex;
+				nodes[j]->child_index == 0 ? nodes[j]->num_triangles : 0;
+			node.offset = nodes[j]->child_index == 0 ? nodes[j]->first_triangle
+													 : nodes[j]->child_index;
 			bvh_nodes.push_back(node);
 		}
 
-		for (size_t j = 0; j < model->mesh()->bvh()->triangles.size(); j++) {
-			glm::uvec3 triangle = model->mesh()->bvh()->triangles[j];
+		for (size_t j = 0; j < model->mesh()->bvh()->triangles().size(); j++) {
+			glm::uvec3 triangle = model->mesh()->bvh()->triangles()[j];
 			triangles.push_back(glm::uvec4(triangle, 0));
 		}
 
@@ -168,7 +168,7 @@ void buildGPUData(std::vector<SSBO_Vertex>& vertices,
 
 		bvh_offset += nodes.size();
 		vertex_offset += model->mesh()->vertexPositions().size();
-		triangle_offset += model->mesh()->bvh()->triangles.size();
+		triangle_offset += model->mesh()->bvh()->triangles().size();
 	}
 }
 
@@ -235,7 +235,7 @@ void GPU_Raytracer::updateSSBOs(std::shared_ptr<Scene> scenePtr) {
 
 		bvh_offset += nodes.size();
 		vertex_offset += model->mesh()->vertexPositions().size();
-		triangle_offset += model->mesh()->bvh()->triangles.size();
+		triangle_offset += model->mesh()->bvh()->triangles().size();
 	}
 
 	// glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_verticesSSBO);

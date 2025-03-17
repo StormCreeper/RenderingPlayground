@@ -9,10 +9,10 @@ void getAABBRecursive(std::shared_ptr<BVH> bvh, std::vector<AABB>& aabbs,
 		aabbs.push_back(*node->aabb);
 		return;
 	}
-	if (node->childIndex != 0) {
-		getAABBRecursive(bvh, aabbs, bvh->nodes()[node->childIndex + 0],
+	if (node->child_index != 0) {
+		getAABBRecursive(bvh, aabbs, bvh->nodes()[node->child_index + 0],
 						 depth - 1);
-		getAABBRecursive(bvh, aabbs, bvh->nodes()[node->childIndex + 1],
+		getAABBRecursive(bvh, aabbs, bvh->nodes()[node->child_index + 1],
 						 depth - 1);
 	}
 }
