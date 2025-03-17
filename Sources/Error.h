@@ -2,13 +2,10 @@
 #include <glad/glad.h>
 #include <string>
 
-void APIENTRY debugMessageCallback(GLenum source,
-    GLenum type,
-    GLuint id,
-    GLenum severity,
-    GLsizei length,
-    const GLchar* message,
-    const void* userParam);
+void APIENTRY debugMessageCallback(GLenum source, GLenum type, GLuint id,
+								   GLenum severity, GLsizei length,
+								   const GLchar* message,
+								   const void* userParam);
 
 void exitOnCriticalError(const std::string& message);
 
