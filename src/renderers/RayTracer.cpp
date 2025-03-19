@@ -5,12 +5,17 @@
 
 #include "primitives/Intersections.h"
 #include "primitives/Ray.h"
+#include "primitives/AABB.h"
 #include "renderers/RayTracer.h"
+#include "acceleration/BVH.h"
 
+#include "core/Scene.h"
 #include "core/Mesh.h"
+#include "core/Model.h"
 #include "core/Camera.h"
 #include "core/BRDF.h"
 #include "core/ColorCorrection.h"
+#include "core/Light.h"
 
 RayTracer::RayTracer() : m_imagePtr(std::make_shared<Image>(0, 0)) {}
 

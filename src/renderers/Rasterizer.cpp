@@ -1,9 +1,20 @@
 #include "renderers/Rasterizer.h"
+
 #include "core/Resources.h"
 #include "core/Error.h"
 #include "core/Camera.h"
 
 #include "core/Material.h"
+#include "acceleration/BVH.h"
+#include "primitives/AABB.h"
+
+#include "core/Scene.h"
+#include "core/Mesh.h"
+#include "core/Image.h"
+#include "core/ShaderProgram.h"
+#include "core/Model.h"
+#include "core/Light.h"
+#include "core/Texture.h"
 
 #include <glad/glad.h>
 

@@ -1,4 +1,5 @@
 #include "core/ColorCorrection.h"
+#include "core/ShaderProgram.h"
 
 // From
 // https://blog.demofox.org/2020/06/06/casual-shadertoy-path-tracing-2-image-improvement-and-glossy-reflections/
@@ -30,4 +31,16 @@ glm::vec3 ACESFilm(glm::vec3 x) {
 	float d = 0.59f;
 	float e = 0.14f;
 	return clamp((x * (a * x + b)) / (x * (c * x + d) + e), 0.0f, 1.0f);
+}
+
+void ImageParameters::setUniforms(ShaderProgram& program,
+								  std::string name) const {
+	program.set(name + ".colorCorrect", colorCorrect);
+	program.set(name + ".useSRGB", useSRGB);
+	program.set(name + ".useToneMapping", useToneMapping);
+	program.set(name + ".useExposure", useExposure);
+	program.set(name + ".exposure", exposure);
+	program.set(name + ".raytracedShadows", raytracedShadows);
+	program.set(name + ".raytracedReflections", raytracedReflections);
+	program.set(name + ".numRefractions", numRefractions);
 }

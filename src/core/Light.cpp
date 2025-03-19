@@ -1,4 +1,5 @@
 #include "core/Light.h"
+#include "core/ShaderProgram.h"
 
 void DirectionalLight::setUniforms(ShaderProgram& program,
 								   std::string name) const {

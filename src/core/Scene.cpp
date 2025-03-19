@@ -1,5 +1,6 @@
 #include "core/Scene.h"
 #include "core/Mesh.h"
+#include "core/Model.h"
 
 void Scene::recomputeBVHs() {
 	for (int i = 0; i < numOfModels(); i++) {

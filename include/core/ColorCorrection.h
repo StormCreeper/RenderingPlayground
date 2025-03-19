@@ -4,7 +4,7 @@
 #include <glm/ext.hpp>
 #include <string>
 
-#include "core/ShaderProgram.h"
+class ShaderProgram;
 
 struct ImageParameters {
 	bool colorCorrect;
@@ -16,16 +16,7 @@ struct ImageParameters {
 	bool raytracedReflections;
 	int numRefractions;
 
-	inline void setUniforms(ShaderProgram& program, std::string name) const {
-		program.set(name + ".colorCorrect", colorCorrect);
-		program.set(name + ".useSRGB", useSRGB);
-		program.set(name + ".useToneMapping", useToneMapping);
-		program.set(name + ".useExposure", useExposure);
-		program.set(name + ".exposure", exposure);
-		program.set(name + ".raytracedShadows", raytracedShadows);
-		program.set(name + ".raytracedReflections", raytracedReflections);
-		program.set(name + ".numRefractions", numRefractions);
-	}
+	void setUniforms(ShaderProgram& program, std::string name) const;
 };
 
 // From

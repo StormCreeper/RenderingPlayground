@@ -1,8 +1,12 @@
-#include "Ray.h"
 
-#include "primitives/Triangle.h"
-#include "primitives/AABB.h"
-#include "acceleration/BVH.h"
+
+#include <vector>
+
+struct Triangle;
+struct AABB;
+class BVH;
+class Ray;
+struct Hit;
 
 bool triangleIntersection(const Ray& ray, const Triangle& triangle, Hit& hit);
 

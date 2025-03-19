@@ -1,4 +1,5 @@
 #include "core/Camera.h"
+#include "primitives/Ray.h"
 
 Ray Camera::rayAt(glm::vec2 pixel, glm::vec2 dim) {
 	glm::vec2 uv = (pixel + 0.5f) / dim;

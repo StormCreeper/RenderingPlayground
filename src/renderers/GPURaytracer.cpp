@@ -1,10 +1,19 @@
 #include "renderers/GPURaytracer.h"
+
+#include "core/Mesh.h"
+#include "core/Image.h"
+#include "core/ShaderProgram.h"
+
 #include "core/Resources.h"
 #include "core/Error.h"
 #include "core/Scene.h"
 #include "core/Camera.h"
 #include "primitives/Triangle.h"
 #include "acceleration/BVH.h"
+#include "primitives/AABB.h"
+#include "core/Model.h"
+#include "core/Light.h"
+#include "core/Texture.h"
 
 #include <glad/glad.h>
 

@@ -1,4 +1,6 @@
 #include "core/BRDF.h"
+#include "core/Light.h"
+#include "core/Scene.h"
 
 float sqr(float x) { return x * x; }
 

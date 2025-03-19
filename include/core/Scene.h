@@ -2,11 +2,11 @@
 
 #include <vector>
 #include <memory>
-
-#include "core/Light.h"
-#include "core/Model.h"
 #include "core/ColorCorrection.h"
-#include "core/Texture.h"
+
+class Model;
+class AbstractLight;
+class Texture;
 
 class Camera;
 

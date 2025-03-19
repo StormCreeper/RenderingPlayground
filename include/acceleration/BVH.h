@@ -5,12 +5,11 @@
 #include <iostream>
 #include <chrono>
 
-#include "core/Mesh.h"
-#include "primitives/AABB.h"
-#include "core/Scene.h"
+#include <glm/glm.hpp>
 
 class Mesh;
 class Scene;
+struct AABB;
 
 /**
  * @brief BVH Node object, with constant size

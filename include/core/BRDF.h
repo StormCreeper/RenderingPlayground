@@ -1,10 +1,12 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <memory>
 
-#include "core/Light.h"
 #include "core/Material.h"
-#include "core/Scene.h"
+
+class AbstractLight;
+class Scene;
 
 class BRDF {
    private:

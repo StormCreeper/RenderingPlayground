@@ -1,5 +1,12 @@
 #include "primitives/Intersections.h"
 
+#include "primitives/Triangle.h"
+#include "primitives/AABB.h"
+#include "primitives/Ray.h"
+#include "acceleration/BVH.h"
+
+#include "core/Mesh.h"
+
 #include <set>
 
 bool triangleIntersection(const Ray& ray, const Triangle& triangle, Hit& hit) {

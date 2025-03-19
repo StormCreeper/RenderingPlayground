@@ -1,4 +1,5 @@
 #include "core/Material.h"
+#include "core/ShaderProgram.h"
 
 void Material::setUniforms(ShaderProgram& program, std::string name) const {
 	program.set(name + ".albedo", _albedo);

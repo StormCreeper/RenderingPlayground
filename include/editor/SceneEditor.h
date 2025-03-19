@@ -15,6 +15,7 @@
 #include "core/Scene.h"
 #include "core/Material.h"
 #include "utils/Transform.h"
+#include "core/Mesh.h"
 
 void renderTransformUI(Transform& transform, int id) {
 	glm::vec3 translation = transform.getTranslation();

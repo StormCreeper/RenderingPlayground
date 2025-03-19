@@ -5,8 +5,9 @@
 
 #include <string>
 
-#include "core/ShaderProgram.h"
 #include "utils/Transform.h"
+
+class ShaderProgram;
 
 class AbstractLight : public Transform {
    protected:
@@ -63,13 +64,14 @@ class PointLight : public AbstractLight {
 
    public:
 	PointLight(const glm::vec3& color, float intensity, const glm::vec3& origin,
-			   float ac, float al, float aq)
+			   float ac = 1.0f, float al = 0.0f, float aq = 0.0f)
 		: AbstractLight(color, intensity, 1), ac(ac), al(al), aq(aq) {
 		setTranslation(origin);
 	}
 	void setUniforms(ShaderProgram& program, std::string name) const override;
 
 	float intensity(glm::vec3 pos) const override;
+
 	glm::vec3 wi(glm::vec3 pos) const override {
 		return glm::normalize(getTranslation() - pos);
 	}

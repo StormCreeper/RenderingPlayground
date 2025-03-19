@@ -1,6 +1,8 @@
 #define _USE_MATH_DEFINES
 
 #include "core/Mesh.h"
+#include "acceleration/BVH.h"
+#include "primitives/AABB.h"
 
 #include <cmath>
 #include <algorithm>

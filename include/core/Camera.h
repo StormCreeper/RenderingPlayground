@@ -10,8 +10,6 @@
 
 #include "utils/Transform.h"
 
-#include "primitives/Ray.h"
-
 class Ray;
 
 /// Basic camera model

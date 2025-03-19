@@ -2,11 +2,13 @@
 
 #include <glad/glad.h>
 #include <string>
+#include <memory>
+#include <glm/glm.hpp>
 
-#include "core/Scene.h"
-#include "core/Mesh.h"
-#include "core/Image.h"
-#include "core/ShaderProgram.h"
+class Scene;
+class Mesh;
+class ShaderProgram;
+class Image;
 
 class GPU_Raytracer {
    public:

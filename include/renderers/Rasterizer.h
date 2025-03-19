@@ -2,11 +2,14 @@
 
 #include <glad/glad.h>
 #include <string>
+#include <memory>
+#include <vector>
+#include <glm/glm.hpp>
 
-#include "core/Scene.h"
-#include "core/Mesh.h"
-#include "core/Image.h"
-#include "core/ShaderProgram.h"
+class Scene;
+class Image;
+class ShaderProgram;
+class Mesh;
 
 class Rasterizer {
    public:

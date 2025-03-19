@@ -1,4 +1,10 @@
 #include "acceleration/BVH.h"
+#include "primitives/AABB.h"
+#include "primitives/Triangle.h"
+#include "core/Mesh.h"
+#include "core/Scene.h"
+
+#include <glm/glm.hpp>
 
 #include <algorithm>
 

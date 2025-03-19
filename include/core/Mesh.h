@@ -7,7 +7,6 @@
 #include <glm/ext.hpp>
 
 #include "utils/Transform.h"
-#include "acceleration/BVH.h"
 
 class BVH;
 

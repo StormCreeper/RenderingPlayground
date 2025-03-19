@@ -5,7 +5,7 @@
 
 #include <string>
 
-#include "core/ShaderProgram.h"
+class ShaderProgram;
 
 class Material {
    public:

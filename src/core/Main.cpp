@@ -31,12 +31,15 @@
 #include "renderers/RayTracer.h"
 #include "renderers/GPURaytracer.h"
 #include "core/Camera.h"
+#include "core/Texture.h"
 
 #include "editor/UIManager.h"
 #include "editor/SceneEditor.h"
 #include "editor/LightsEditor.h"
 #include "editor/RenderingEditor.h"
 #include "editor/DebugEditor.h"
+
+#include "core/Light.h"
 
 using namespace std;
 
