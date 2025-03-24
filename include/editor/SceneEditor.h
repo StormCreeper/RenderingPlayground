@@ -118,6 +118,16 @@ void renderMaterialUI(Material& mat, int id) {
 					   2.0f);
 	ImGui::SliderFloat(("Absorption##" + std::to_string(id)).c_str(),
 					   &mat.absorption(), 0.0f, 1.0f);
+
+	ImGui::Text("Iridescence");
+	ImGui::SliderFloat(("Dinc##" + std::to_string(id)).c_str(),
+					   &mat.Dinc(), 0.0f, 10.0f);
+	ImGui::SliderFloat(("eta2##" + std::to_string(id)).c_str(),
+					   &mat.eta2(), 1.0f, 5.0f);
+	ImGui::SliderFloat(("eta3##" + std::to_string(id)).c_str(),
+					   &mat.eta3(), 1.0f, 5.0f);
+	ImGui::SliderFloat(("kappa3##" + std::to_string(id)).c_str(),
+					   &mat.kappa3(), 1.0f, 5.0f);
 }
 
 class SceneEditor : public Editor {

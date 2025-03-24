@@ -28,7 +28,11 @@ class Material {
 		  _metalnessTex(-1),
 		  _normalTex(-1),
 		  _heightTex(-1),
-		  _heightMult(0.0f) {}
+		  _heightMult(0.0f),
+		  _Dinc(0.0f),
+		  _eta2(2.0f),
+		  _eta3(3.0f),
+		  _kappa3(0.0f) {}
 
 	void setUniforms(ShaderProgram& program, std::string name) const;
 
@@ -77,6 +81,18 @@ class Material {
 	inline float& heightMult() { return _heightMult; }
 	inline float heightMult() const { return _heightMult; }
 
+	inline float& Dinc() { return _Dinc; }
+	inline float Dinc() const { return _Dinc; }
+
+	inline float& eta2() { return _eta2; }
+	inline float eta2() const { return _eta2; }
+
+	inline float& eta3() { return _eta3; }
+	inline float eta3() const { return _eta3; }
+
+	inline float& kappa3() { return _kappa3; }
+	inline float kappa3() const { return _kappa3; }
+
    private:
 	glm::vec3 _albedo;
 	float _roughness;
@@ -96,6 +112,11 @@ class Material {
 	GLint _normalTex;
 	GLint _heightTex;
 	float _heightMult;
-	;
 	GLint _padding2;
+
+	// Iridescence
+	float _Dinc;
+	float _eta2;
+	float _eta3;
+	float _kappa3;
 };

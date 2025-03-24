@@ -20,4 +20,9 @@ void Material::setUniforms(ShaderProgram& program, std::string name) const {
 	program.set(name + ".normalTex", _normalTex);
 	program.set(name + ".heightTex", _heightTex);
 	program.set(name + ".heightMult", _heightMult);
+
+	program.set(name + ".Dinc", _Dinc);
+	program.set(name + ".eta2", _eta2);
+	program.set(name + ".eta3", _eta3);
+	program.set(name + ".kappa3", _kappa3);
 }

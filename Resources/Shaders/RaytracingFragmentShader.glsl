@@ -53,6 +53,12 @@ struct Material {
     int heightTex;
     float heightMult;
     int padding2;
+    
+    // Iridescence
+    float Dinc;
+    float eta2;
+    float eta3;
+    float kappa3;
 };
 
 struct Hit {

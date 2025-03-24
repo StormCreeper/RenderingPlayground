@@ -48,6 +48,12 @@ struct Material {
     int heightTex;
     float heightMult;
     int padding2;
+
+    // Iridescence
+    float Dinc;
+    float eta2;
+    float eta3;
+    float kappa3;
 };
 
 uniform Material material;
@@ -192,7 +198,7 @@ vec3 evaluateRadiance(Material mat, LightSource source, vec3 normal, vec3 pos) {
 }
 
 void main() {
-    vec3 radiance;
+    vec3 radiance = vec3(0.);
 
     vec3 normal = normalize(fNormal);
     if(material.normalTex != -1) {
