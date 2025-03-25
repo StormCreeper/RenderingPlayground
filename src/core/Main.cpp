@@ -243,12 +243,12 @@ void initScene() {
 	std::string matName = "Chesterfield";
 	std::string matPath = basePath + "Resources/Materials/" + matName + "/";
 
-	// scenePtr->add(std::make_shared<Texture>(matPath + "Base_Color.png", true));
+	scenePtr->add(std::make_shared<Texture>(matPath + "Base_Color.png", true));
 	// scenePtr->add(std::make_shared<Texture>(matPath + "Metallic.png"));
-	// scenePtr->add(std::make_shared<Texture>(matPath + "Roughness.png"));
-	// scenePtr->add(std::make_shared<Texture>(matPath + "Ambient_Occlusion.png"));
+	scenePtr->add(std::make_shared<Texture>(matPath + "Roughness.png"));
+	scenePtr->add(std::make_shared<Texture>(matPath + "Ambient_Occlusion.png"));
 	scenePtr->add(std::make_shared<Texture>(matPath + "Normal.png"));
-	// scenePtr->add(std::make_shared<Texture>(matPath + "Height.png"));
+	scenePtr->add(std::make_shared<Texture>(matPath + "Height.png"));
 
 	// // Mesh
 

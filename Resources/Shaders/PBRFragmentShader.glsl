@@ -80,15 +80,9 @@ vec4 sampleTex(in vec2 uv, in int index, in vec4 fallback) {
     else return texture(textures[index], uv);
 }
 
-float sqr(float x) {
-    return x * x;
-}
-vec2 sqr(vec2 v) {
-    return vec2(sqr(v.x), sqr(v.y));
-}
-vec3 sqr(vec3 v) {
-    return vec3(sqr(v.x), sqr(v.y), sqr(v.z));
-}
+float sqr(float x) { return x * x; }
+vec2 sqr(vec2 v) { return vec2(sqr(v.x), sqr(v.y)); }
+vec3 sqr(vec3 v) { return vec3(sqr(v.x), sqr(v.y), sqr(v.z)); }
 
 vec3 pow3(vec3 v, int p) {
     return vec3(pow(v.x, p), pow(v.y, p), pow(v.z, p));
@@ -220,18 +214,10 @@ vec3 evalSensitivity(float opd, float shift) {
 	return xyz / 1.0685e-7;
 }
 
-vec3 F_Specular(vec3 n, vec3 wi, vec3 wo, in Material material) {
+vec3 IridescentTerm(in float dotNWi, in float dotNWo, in float dotNWh, in float cosTheta1, in Material material) {
     float alpha = sqr(material.roughness);
 
-    float dotNWi = dot(n, wi);
-    float dotNWo = dot(n, wo);
-    
-    if (dotNWi <= 0 || dotNWo <= 0) return vec3(0.0);
-    vec3 wh = normalize(wi + wo);
-    float dotNWh = dot(n, wh);
-
-    float cosTheta1 = dot(wi, wh);
-	float cosTheta2 = sqrt(1.0 - sqr(1.0/material.eta2)*(1.0-sqr(cosTheta1)) );
+	float cosTheta2 = sqrt(1.0 - sqr(1.0/material.eta2)*(1.0-sqr(cosTheta1))); // Refracted angle
 
     // First interface
 
@@ -272,8 +258,25 @@ vec3 F_Specular(vec3 n, vec3 wi, vec3 wo, in Material material) {
     // Convert back to RGB reflectance
 	I = clamp(XYZ_TO_RGB * I, vec3(0.0), vec3(1.0));
 
+    return I;
+
+}
+
+vec3 F_Specular(vec3 n, vec3 wi, vec3 wo, in Material material) {
+    float alpha = sqr(material.roughness);
+
+    float dotNWi = dot(n, wi);
+    float dotNWo = dot(n, wo);
+    
+    if (dotNWi <= 0 || dotNWo <= 0) return vec3(0.0);
+    vec3 wh = normalize(wi + wo);
+    float dotNWh = dot(n, wh);
+
+    float cosTheta1 = dot(wi, wh);
+
     float D = NormalDistributionGGX(dotNWh, alpha);
     float G = G_GGX(dotNWi, dotNWo, alpha);
+    vec3 I = IridescentTerm(dotNWi, dotNWo, dotNWh, cosTheta1, material);
 
     return D * G * I / (4*dotNWi*dotNWo);
 }
@@ -284,11 +287,13 @@ vec3 evaluateRadianceDirectional(Material mat, LightSource source, vec3 n, vec3 
     vec3 wi = -normalize(source.direction); // Light dir
     vec3 wo = normalize(eye - pos);       // Eye dir
 
+    mat.roughness = sampleTex(fUV, mat.roughnessTex, vec4(mat.roughness)).x;
+
     vec3 fs = F_Specular(n, wi, wo, mat) * source.color * source.intensity;
 
-    float metalness = sampleTex(fUV, mat.metalnessTex, vec4(mat.metalness)).x;
+    mat.metalness = sampleTex(fUV, mat.metalnessTex, vec4(mat.metalness)).x;
 
-    return (fd * (1.0 - metalness) + metalness * fs) * max(dot(wi, n), 0.0);
+    return (fd * (1.0 - mat.metalness) + mat.metalness * fs) * max(dot(wi, n), 0.0);
 }
 
 vec3 evaluateRadiancePointLight(Material mat, LightSource source, vec3 normal, vec3 pos) {
