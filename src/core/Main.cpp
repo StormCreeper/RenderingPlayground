@@ -30,6 +30,7 @@
 #include "renderers/Rasterizer.h"
 #include "renderers/RayTracer.h"
 #include "renderers/GPURaytracer.h"
+#include "renderers/GPUPathtracer.h"
 #include "core/Camera.h"
 #include "core/Texture.h"
 
@@ -49,6 +50,7 @@ static std::shared_ptr<Scene> scenePtr;
 static std::shared_ptr<Rasterizer> rasterizerPtr;
 static std::shared_ptr<RayTracer> rayTracerPtr;
 static std::shared_ptr<GPU_Raytracer> gpuRaytracerPtr;
+static std::shared_ptr<GPU_Pathtracer> gpuPathtracerPtr;
 
 static std::shared_ptr<UIManager> uiManager;
 
@@ -106,6 +108,7 @@ void keyCallback(GLFWwindow* windowPtr, int key, int scancode, int action,
 		} else if (action == GLFW_PRESS && key == GLFW_KEY_F12) {
 			rasterizerPtr->loadShaderProgram(basePath);
 			gpuRaytracerPtr->loadShaderProgram(basePath);
+			gpuPathtracerPtr->loadShaderProgram(basePath);
 		} else if (action == GLFW_PRESS && key == GLFW_KEY_F) {
 			scenePtr->camera()->setFoV(
 				std::max(5.f, scenePtr->camera()->getFoV() - 5.f));
@@ -113,7 +116,8 @@ void keyCallback(GLFWwindow* windowPtr, int key, int scancode, int action,
 			scenePtr->camera()->setFoV(
 				std::min(120.f, scenePtr->camera()->getFoV() + 5.f));
 		} else if (action == GLFW_PRESS && key == GLFW_KEY_TAB) {
-			rendererID = rendererID == 0 ? 2 : 0;
+			rendererID = (rendererID + 1) % 4;
+			if (rendererID == 1) rendererID = 2;
 		} else if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
 			raytrace();
 		} else {
@@ -239,40 +243,46 @@ void initScene() {
 	std::string matName = "Chesterfield";
 	std::string matPath = basePath + "Resources/Materials/" + matName + "/";
 
-	scenePtr->add(std::make_shared<Texture>(matPath + "Base_Color.png", true));
-	scenePtr->add(std::make_shared<Texture>(matPath + "Metallic.png"));
-	scenePtr->add(std::make_shared<Texture>(matPath + "Roughness.png"));
-	scenePtr->add(std::make_shared<Texture>(matPath + "Ambient_Occlusion.png"));
+	// scenePtr->add(std::make_shared<Texture>(matPath + "Base_Color.png", true));
+	// scenePtr->add(std::make_shared<Texture>(matPath + "Metallic.png"));
+	// scenePtr->add(std::make_shared<Texture>(matPath + "Roughness.png"));
+	// scenePtr->add(std::make_shared<Texture>(matPath + "Ambient_Occlusion.png"));
 	scenePtr->add(std::make_shared<Texture>(matPath + "Normal.png"));
-	scenePtr->add(std::make_shared<Texture>(matPath + "Height.png"));
+	// scenePtr->add(std::make_shared<Texture>(matPath + "Height.png"));
 
-	// Mesh
+	// // Mesh
 
-	Material goldMat = {glm::vec3(1.0f), 0.4f, 0.1f,
-						glm::vec3(1.0, 0.71, 0.29)};
+	// Material goldMat = {glm::vec3(1.0f), 0.4f, 0.1f,
+	// 					glm::vec3(1.0, 0.71, 0.29)};
 
-	goldMat.albedoTex() = 0;
-	// goldMat.metalnessTex() = 1;
-	goldMat.roughnessTex() = 2;
-	goldMat.aoTex() = 3;
-	goldMat.normalTex() = 4;
-	goldMat.heightTex() = 5;
+	// goldMat.albedoTex() = 0;
+	// // goldMat.metalnessTex() = 1;
+	// goldMat.roughnessTex() = 2;
+	// goldMat.aoTex() = 3;
+	// goldMat.normalTex() = 4;
+	// goldMat.heightTex() = 5;
 
-	goldMat.heightMult() = 0.1f;
+	// goldMat.heightMult() = 0.1f;
 
-	auto sphereMeshPtr = loadMesh("Resources/Models/sphere_.off", goldMat);
+	// auto sphereMeshPtr = loadMesh("Resources/Models/sphere_.off", goldMat);
+	// sphereMeshPtr->computeBoundingSphere(center, meshScale);
+	// sphereMeshPtr->setTranslation(glm::vec3(1.0f, 0, 0) * meshScale);
+
+	// Material glassMat(glm::vec3(1.0f), 0.1f, 1.0f, glm::vec3(1.0, 1.0, 1.0),
+	// 				  true, 0.04f, 1.3f);
+
+	// auto denisMeshPtr = loadMesh("Resources/Models/denis.off", glassMat);
+	// glm::vec3 denisCenter;
+	// float denisScale;
+	// denisMeshPtr->computeBoundingSphere(denisCenter, denisScale);
+	// denisMeshPtr->setScale(meshScale / denisScale);
+	// denisMeshPtr->setTranslation(glm::vec3(-1.0f, 0, 0) * meshScale);
+
+	Material metalMat = {glm::vec3(1.0f), 0.4f, 0.1f,
+						 glm::vec3(1.0, 0.71, 0.29)};
+
+	auto sphereMeshPtr = loadMesh("Resources/Models/sphere_.off", metalMat);
 	sphereMeshPtr->computeBoundingSphere(center, meshScale);
-	sphereMeshPtr->setTranslation(glm::vec3(1.0f, 0, 0) * meshScale);
-
-	Material glassMat(glm::vec3(1.0f), 0.1f, 1.0f, glm::vec3(1.0, 1.0, 1.0),
-					  true, 0.04f, 1.3f);
-
-	auto denisMeshPtr = loadMesh("Resources/Models/denis.off", glassMat);
-	glm::vec3 denisCenter;
-	float denisScale;
-	denisMeshPtr->computeBoundingSphere(denisCenter, denisScale);
-	denisMeshPtr->setScale(meshScale / denisScale);
-	denisMeshPtr->setTranslation(glm::vec3(-1.0f, 0, 0) * meshScale);
 
 	Material groundMat = {glm::vec3(1.0f), 0.5f, 0.1f,
 						  glm::vec3(1.0, 1.0, 1.0)};
@@ -286,21 +296,21 @@ void initScene() {
 	// Lights
 
 	scenePtr->add(std::make_shared<DirectionalLight>(
-		glm::vec3(0.7f, 0.9f, 0.9f), 4.0f,
+		glm::vec3(1.0f), 4.0f,
 		glm::normalize(glm::vec3(0.04f, -0.544f, -0.838f))));
 
 	glm::vec3 pos1 =
-		center + 1.5f * meshScale * glm::normalize(glm::vec3(-1, 0.5, 0.5));
+		center + 3.5f * meshScale * glm::normalize(glm::vec3(-1, 0.5, 0.5));
 	glm::vec3 pos2 =
-		center + 1.5f * meshScale * glm::normalize(glm::vec3(1, 0.5, -0.1));
+		center + 3.5f * meshScale * glm::normalize(glm::vec3(1, 0.5, -0.1));
 	glm::vec3 pos3 =
-		center + 1.5f * meshScale * glm::normalize(glm::vec3(0.2, 0, -1));
+		center + 3.5f * meshScale * glm::normalize(glm::vec3(0.2, 0, -1));
 
-	scenePtr->add(std::make_shared<PointLight>(glm::vec3(1.0f, 0.5f, 0.5f),
+	scenePtr->add(std::make_shared<PointLight>(glm::vec3(1.0f),
 											   4.0f, pos1, 1.0f, 0.0f, 0.2f));
-	scenePtr->add(std::make_shared<PointLight>(glm::vec3(0.5f, 1.0f, 0.5f),
+	scenePtr->add(std::make_shared<PointLight>(glm::vec3(1.0f),
 											   4.0f, pos2, 1.0f, 0.0f, 0.2f));
-	scenePtr->add(std::make_shared<PointLight>(glm::vec3(0.8f, 0.5f, 1.0f),
+	scenePtr->add(std::make_shared<PointLight>(glm::vec3(1.0f),
 											   4.0f, pos3, 1.0f, 0.0f, 0.2f));
 
 	scenePtr->set(
@@ -341,6 +351,9 @@ void init() {
 	gpuRaytracerPtr = make_shared<GPU_Raytracer>();
 	gpuRaytracerPtr->init(basePath, scenePtr);
 
+	gpuPathtracerPtr = make_shared<GPU_Pathtracer>();
+	gpuPathtracerPtr->init(basePath, scenePtr);
+
 	uiManager = make_shared<UIManager>();
 	uiManager->init(windowPtr);
 
@@ -364,6 +377,9 @@ void render() {
 		rasterizerPtr->display(rayTracerPtr->image());
 	else if (rendererID == 2) {
 		gpuRaytracerPtr->render(scenePtr);
+		rasterizerPtr->renderDebug(scenePtr);
+	} else if (rendererID == 3) {
+		gpuPathtracerPtr->render(scenePtr);
 		rasterizerPtr->renderDebug(scenePtr);
 	}
 

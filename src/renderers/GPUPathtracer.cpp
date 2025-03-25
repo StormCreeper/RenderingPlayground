@@ -1,4 +1,4 @@
-#include "renderers/GPURaytracer.h"
+#include "renderers/GPUPathtracer.h"
 
 #include "core/Mesh.h"
 #include "core/Image.h"
@@ -19,32 +19,32 @@
 
 #include <glad/glad.h>
 
-void GPU_Raytracer::init(const std::string& basePath,
-						 const std::shared_ptr<Scene> scenePtr) {
+void GPU_Pathtracer::init(const std::string& basePath,
+						  const std::shared_ptr<Scene> scenePtr) {
 	initScreenQuad();
 	loadShaderProgram(basePath);
 	createSSBOs(scenePtr);
 }
 
-void GPU_Raytracer::setResolution(int width, int height) {
+void GPU_Pathtracer::setResolution(int width, int height) {
 	glViewport(0, 0, (GLint)width, (GLint)height);
 	m_resolution = glm::vec2(width, height);
 }
 
-void GPU_Raytracer::loadShaderProgram(const std::string& basePath) {
+void GPU_Pathtracer::loadShaderProgram(const std::string& basePath) {
 	m_raytracingShaderProgramPtr.reset();
 	try {
 		std::string shaderPath = basePath + "/" + SHADER_PATH;
 		m_raytracingShaderProgramPtr = ShaderProgram::genBasicShaderProgram(
-			shaderPath + "/RaytracingVertexShader.glsl",
-			shaderPath + "/RaytracingFragmentShader.glsl");
+			shaderPath + "/PathtracingVertexShader.glsl",
+			shaderPath + "/PathtracingFragmentShader.glsl");
 	} catch (std::exception& e) {
 		exitOnCriticalError(std::string("[Error loading shader program]") +
 							e.what());
 	}
 }
 
-void GPU_Raytracer::render(std::shared_ptr<Scene> scenePtr) {
+void GPU_Pathtracer::render(std::shared_ptr<Scene> scenePtr) {
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_ALWAYS);
@@ -105,7 +105,7 @@ void GPU_Raytracer::render(std::shared_ptr<Scene> scenePtr) {
 	glDepthFunc(GL_LESS);
 }
 
-void GPU_Raytracer::createSSBOs(std::shared_ptr<Scene> scenePtr) {
+void GPU_Pathtracer::createSSBOs(std::shared_ptr<Scene> scenePtr) {
 	// Create an SSBO that contains all the models of the scene
 	std::vector<SSBO_Vertex> vertices;
 	std::vector<glm::uvec4> triangles;
@@ -142,7 +142,7 @@ void GPU_Raytracer::createSSBOs(std::shared_ptr<Scene> scenePtr) {
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
-void GPU_Raytracer::updateSSBOs(std::shared_ptr<Scene> scenePtr) {
+void GPU_Pathtracer::updateSSBOs(std::shared_ptr<Scene> scenePtr) {
 	// Create an SSBO that contains all the models of the scene
 	std::vector<SSBO_Vertex> vertices;
 	std::vector<glm::uvec4> triangles;
@@ -192,8 +192,8 @@ void GPU_Raytracer::updateSSBOs(std::shared_ptr<Scene> scenePtr) {
 	// glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
-GLuint GPU_Raytracer::genGPUBuffer(size_t elementSize, size_t numElements,
-								   const void* data) {
+GLuint GPU_Pathtracer::genGPUBuffer(size_t elementSize, size_t numElements,
+									const void* data) {
 	GLuint vbo;
 	glGenBuffers(
 		1,
@@ -206,8 +206,8 @@ GLuint GPU_Raytracer::genGPUBuffer(size_t elementSize, size_t numElements,
 	return vbo;
 }
 
-GLuint GPU_Raytracer::genGPUVertexArray(GLuint posVbo, GLuint ibo,
-										bool hasNormals, GLuint normalVbo) {
+GLuint GPU_Pathtracer::genGPUVertexArray(GLuint posVbo, GLuint ibo,
+										 bool hasNormals, GLuint normalVbo) {
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
@@ -224,7 +224,7 @@ GLuint GPU_Raytracer::genGPUVertexArray(GLuint posVbo, GLuint ibo,
 	return vao;
 }
 
-void GPU_Raytracer::initScreenQuad() {
+void GPU_Pathtracer::initScreenQuad() {
 	std::vector<float> pData = {-1.0, -1.0, 0.0, 1.0, -1.0, 0.0,
 								1.0, 1.0, 0.0, -1.0, 1.0, 0.0};
 	std::vector<unsigned int> iData = {0, 1, 2, 0, 2, 3};
