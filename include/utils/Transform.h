@@ -62,7 +62,7 @@ class Transform {
 	glm::mat4 m_matrix;
 	glm::mat4 m_inv_matrix;
 
-	bool changed = false;  // For cached matrix computation
+	bool changed = true;  // For cached matrix computation
 
 	inline void recomputeTransformMatrix() {
 		glm::mat4 id(1.0);
