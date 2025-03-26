@@ -43,4 +43,5 @@ void ImageParameters::setUniforms(ShaderProgram& program,
 	program.set(name + ".raytracedShadows", raytracedShadows);
 	program.set(name + ".raytracedReflections", raytracedReflections);
 	program.set(name + ".numRefractions", numRefractions);
+	program.set(name + ".numTermIridescence", numTermIridescence);
 }

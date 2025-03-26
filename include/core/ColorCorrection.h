@@ -15,6 +15,7 @@ struct ImageParameters {
 	bool raytracedShadows;
 	bool raytracedReflections;
 	int numRefractions;
+	int numTermIridescence;
 
 	void setUniforms(ShaderProgram& program, std::string name) const;
 };

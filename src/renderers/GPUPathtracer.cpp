@@ -36,8 +36,8 @@ void GPU_Pathtracer::loadShaderProgram(const std::string& basePath) {
 	try {
 		std::string shaderPath = basePath + "/" + SHADER_PATH;
 		m_raytracingShaderProgramPtr = ShaderProgram::genBasicShaderProgram(
-			shaderPath + "/PathtracingVertexShader.glsl",
-			shaderPath + "/PathtracingFragmentShader.glsl");
+			shaderPath + "/RaytracingVertexShader.glsl",
+			shaderPath + "/RaytracingFragmentShader.glsl");
 	} catch (std::exception& e) {
 		exitOnCriticalError(std::string("[Error loading shader program]") +
 							e.what());

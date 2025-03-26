@@ -67,6 +67,7 @@ struct ImageParameters {
     bool useToneMapping;
     bool useExposure;
     float exposure;
+    int numTermIridescence;
 };
 
 uniform ImageParameters imageParameters;
@@ -152,7 +153,7 @@ vec3 Fresnel(vec3 wi, vec3 wh, vec3 F0) {
     return F0 + (1-F0) * pow(1 - max(0, dot(wi, wh)), 5);
 }
 
-// Fresnel equations for dielectric/dielectric interfaces.
+// Fresnel equations for dielectric/dielectric interfaces (from the paper)
 void fresnelDielectric(in float ct1, in float n1, in float n2,
                        out vec2 R, out vec2 phi) {
 
@@ -175,7 +176,7 @@ void fresnelDielectric(in float ct1, in float n1, in float n2,
   }
 }
 
-// Fresnel equations for dielectric/conductor interfaces.
+// Fresnel equations for dielectric/conductor interfaces (from the paper)
 void fresnelConductor(in float ct1, in float n1, in float n2, in float k,
                        out vec2 R, out vec2 phi) {
 
@@ -201,18 +202,23 @@ void fresnelConductor(in float ct1, in float n1, in float n2, in float k,
 float depol (vec2 polV){ return 0.5 * (polV.x + polV.y); }
 vec3 depolColor (vec3 colS, vec3 colP){ return 0.5 * (colS + colP); }
 
-// Evaluation XYZ sensitivity curves in Fourier space
-vec3 evalSensitivity(float opd, float shift) {
-
-	// Use Gaussian fits, given by 3 parameters: val, pos and var
-	float phase = 2*PI * opd * 1.0e-6;
-	vec3 val = vec3(5.4856e-13, 4.4201e-13, 5.2481e-13);
-	vec3 pos = vec3(1.6810e+06, 1.7953e+06, 2.2084e+06);
-	vec3 var = vec3(4.3278e+09, 9.3046e+09, 6.6121e+09);
-	vec3 xyz = val * sqrt(2*PI * var) * cos(pos * phase + shift) * exp(- var * phase*phase);
-	xyz.x   += 9.7470e-14 * sqrt(2*PI * 4.5282e+09) * cos(2.2399e+06 * phase + shift) * exp(- 4.5282e+09 * phase*phase);
-	return xyz / 1.0685e-7;
+// Re(^S_j): Real part of the fourier transform of the XYZ spectral sensitivity function
+vec3 realSjHat(float lambda) {
+    float phase = 2. * PI * lambda;
+    
+    // Gaussian fitted parameters (1 lobe for each channel + 1 for X)
+    vec3 mu = vec3(1674151.2465475644, 1784076.2775149457, 2214886.2911084783);
+    vec3 var = vec3(4393928061.453401, 8852350507.77624, 6345753777.39152);
+    vec3 A = vec3(3.793302227394059e-13, 3.200870113880713e-13, 3.7771311573347314e-13);
+    vec3 X_2 = vec3(2237138.671954017, 4941821272.369461, 7.293929316557108e-14);
+    float normFactor = 7.559720786937317e-08;
+    
+    vec3 xyz = A * sqrt(2.*PI*var) * cos(mu*phase) * exp(-phase*phase*var);
+    xyz.x += X_2.z * sqrt(2.*PI*X_2.y) * cos(X_2.x * phase) * exp(-phase*phase*X_2.y);
+    
+    return xyz / normFactor;
 }
+
 
 vec3 IridescentTerm(in float dotNWi, in float dotNWo, in float dotNWh, in float cosTheta1, in Material material) {
     float alpha = sqr(material.roughness);
@@ -232,7 +238,7 @@ vec3 IridescentTerm(in float dotNWi, in float dotNWo, in float dotNWh, in float 
 	fresnelConductor(cosTheta2, material.eta2, material.eta3, material.kappa3, R23, phi23);
 
     // Phase shift
-	float OPD = material.Dinc*cosTheta2;
+	float OPD = material.Dinc*cosTheta2 * 1e-6;
 	vec2 phi2 = phi21 + phi23;
 
     // Compound terms
@@ -243,23 +249,22 @@ vec3 IridescentTerm(in float dotNWi, in float dotNWo, in float dotNWh, in float 
 
     // Reflectance term for m=0 (DC term amplitude)
 	vec2 C0 = R12 + Rs;
-	vec3 S0 = evalSensitivity(0.0, 0.0);
+	vec3 S0 = realSjHat(0.0);
 	I += depol(C0) * S0;
 
-    // Reflectance term for m>0 (pairs of diracs)
+    // Reflectance term for m>0
 	vec2 Cm = Rs - T121;
-	for (int m=1; m<=3; ++m){
-		Cm *= r123; // Compute Cm in the loop 
-		vec3 SmS = 2.0 * evalSensitivity(m*OPD, m*phi2.x);
-		vec3 SmP = 2.0 * evalSensitivity(m*OPD, m*phi2.y);
-		I += depolColor(Cm.x*SmS, Cm.y*SmP);
+	for (int m=1; m<=imageParameters.numTermIridescence; ++m){
+		Cm *= r123; // Cm = (Rs - T121) * (R12 * R23)^m
+		vec3 SmS = realSjHat(m*OPD) * cos(m*phi2.x);
+		vec3 SmP = realSjHat(m*OPD) * cos(m*phi2.y);
+		I += 2.0 * depolColor(Cm.x*SmS, Cm.y*SmP);
 	}
 
-    // Convert back to RGB reflectance
-	I = clamp(XYZ_TO_RGB * I, vec3(0.0), vec3(1.0));
+    // RGB reflectance
+	I = XYZ_TO_RGB * I;
 
     return I;
-
 }
 
 vec3 F_Specular(vec3 n, vec3 wi, vec3 wo, in Material material) {
@@ -321,6 +326,18 @@ void main() {
     if(material.normalTex != -1) {
         vec3 normalMap = sampleTex(fUV, material.normalTex, vec4(0.5, 0.5, 1.0, 1.0)).xyz * 2.0 - 1.0;
         normal = normalize(fTangent * normalMap.x + fBitangent * normalMap.y + fNormal * normalMap.z);
+    }
+
+    Material material = material;
+
+    // Hardcoded film thickness for the ground
+    if(fPos.y < -0.5) {
+        vec2 center = vec2(0.0, 0.5);
+        float radius = 0.3;
+        float dist = length(fPos.xz - center);
+        float fact = exp(-dist / radius) * (1. + 0.5 * sin(fPos.x * 10.) * sin(fPos.z * 15.));
+        material.Dinc *= fact;
+        material.roughness = 1. - fact * 0.6;
     }
     
     for (int i = 0; i < numOfLights; i++) {

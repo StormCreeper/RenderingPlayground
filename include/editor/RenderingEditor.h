@@ -48,6 +48,9 @@ class RenderingEditor : public Editor {
 			ImGui::SliderInt("Number of Refractions",
 							 &_scenePtr->imageParameters().numRefractions, 0,
 							 10);
+			ImGui::SliderInt("Number of Term Iridescence",
+							 &_scenePtr->imageParameters().numTermIridescence, 0,
+							 10);
 		}
 	}
 };

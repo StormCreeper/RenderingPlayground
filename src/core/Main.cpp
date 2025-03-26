@@ -118,6 +118,7 @@ void keyCallback(GLFWwindow* windowPtr, int key, int scancode, int action,
 		} else if (action == GLFW_PRESS && key == GLFW_KEY_TAB) {
 			rendererID = (rendererID + 1) % 4;
 			if (rendererID == 1) rendererID = 2;
+			if (rendererID == 3) rendererID = 0;
 		} else if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
 			raytrace();
 		} else {
@@ -244,7 +245,7 @@ void initScene() {
 	std::string matPath = basePath + "Resources/Materials/" + matName + "/";
 
 	scenePtr->add(std::make_shared<Texture>(matPath + "Base_Color.png", true));
-	// scenePtr->add(std::make_shared<Texture>(matPath + "Metallic.png"));
+	scenePtr->add(std::make_shared<Texture>(matPath + "Metallic.png"));
 	scenePtr->add(std::make_shared<Texture>(matPath + "Roughness.png"));
 	scenePtr->add(std::make_shared<Texture>(matPath + "Ambient_Occlusion.png"));
 	scenePtr->add(std::make_shared<Texture>(matPath + "Normal.png"));
@@ -278,14 +279,45 @@ void initScene() {
 	// denisMeshPtr->setScale(meshScale / denisScale);
 	// denisMeshPtr->setTranslation(glm::vec3(-1.0f, 0, 0) * meshScale);
 
-	Material metalMat = {glm::vec3(1.0f), 0.4f, 0.1f,
+	Material metalMat = {glm::vec3(1.0f), 0.6f, 1.0f,
 						 glm::vec3(1.0, 0.71, 0.29)};
+	metalMat.Dinc() = 0.91f;
+	metalMat.eta2() = 1.442f;  // Gasoline
+	metalMat.eta3() = 3.0f;
 
-	auto sphereMeshPtr = loadMesh("Resources/Models/sphere_.off", metalMat);
-	sphereMeshPtr->computeBoundingSphere(center, meshScale);
+	auto denisMeshPtr = loadMesh("Resources/Models/denis.off", metalMat);
+	denisMeshPtr->computeBoundingSphere(center, meshScale);
+	denisMeshPtr->setTranslation(glm::vec3(-1.0f, 0, 0) * meshScale);
 
-	Material groundMat = {glm::vec3(1.0f), 0.5f, 0.1f,
+	Material sphereMat = {glm::vec3(48, 29, 29) / 255.f, 0.47f, 0.151f,
+						  glm::vec3(1.0, 0.71, 0.29)};
+	sphereMat.Dinc() = 1.25f;
+	sphereMat.eta2() = 1.442f;
+	sphereMat.eta3() = 3.0f;
+	sphereMat.kappa3() = 1.0f;
+
+	// sphereMat.albedoTex() = 0;
+	// goldMat.metalnessTex() = 1;
+	// sphereMat.roughnessTex() = 2;
+	sphereMat.aoTex() = 3;
+	sphereMat.normalTex() = 4;
+	sphereMat.heightTex() = 5;
+
+	sphereMat.heightMult() = 0.1f;
+
+	auto sphereMeshPtr = loadMesh("Resources/Models/sphere_.off", sphereMat);
+	float sphereScale;
+	glm::vec3 sphereCenter;
+	sphereMeshPtr->computeBoundingSphere(sphereCenter, sphereScale);
+	sphereMeshPtr->setScale(meshScale / sphereScale);
+	sphereMeshPtr->setTranslation(glm::vec3(1.0f, 0, 0) * meshScale);
+
+	Material groundMat = {glm::vec3(1.0f), 1.0f, 1.0f,
 						  glm::vec3(1.0, 1.0, 1.0)};
+	groundMat.Dinc() = 2.5f;
+	groundMat.eta2() = 1.442f;
+	groundMat.eta3() = 3.0f;
+	groundMat.kappa3() = 1.0f;
 
 	auto planeMeshPtr = loadMesh("Resources/Models/plane.off", groundMat);
 	planeMeshPtr->setTranslation(glm::vec3(0.0f, -meshScale, 0.0f));
@@ -314,7 +346,7 @@ void initScene() {
 											   4.0f, pos3, 1.0f, 0.0f, 0.2f));
 
 	scenePtr->set(
-		ImageParameters{true, true, true, true, 0.4f, true, false, 10});
+		ImageParameters{true, true, true, true, 0.4f, true, false, 10, 2});
 
 	// Camera
 	int width, height;
